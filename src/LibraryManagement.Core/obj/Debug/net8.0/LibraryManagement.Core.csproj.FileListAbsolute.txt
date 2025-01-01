@@ -1,0 +1,11 @@
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\bin\Debug\net8.0\LibraryManagement.Core.deps.json
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\bin\Debug\net8.0\LibraryManagement.Core.dll
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\bin\Debug\net8.0\LibraryManagement.Core.pdb
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.AssemblyInfoInputs.cache
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.AssemblyInfo.cs
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.csproj.CoreCompileInputs.cache
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.dll
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\refint\LibraryManagement.Core.dll
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\LibraryManagement.Core.pdb
+C:\Projects\LibraryManagement\src\LibraryManagement.Core\obj\Debug\net8.0\ref\LibraryManagement.Core.dll

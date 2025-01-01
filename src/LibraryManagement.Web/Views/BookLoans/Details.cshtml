@@ -1,0 +1,131 @@
+@model LibraryManagement.Core.Entities.BookLoan
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Ödünç Detayı</h1>
+            <div>
+                @if (Model.IsReturned)
+                {
+                            <span class="badge bg-success">İade Edildi</span>
+                }
+                else if (Model.DueDate < DateTime.Now)
+                {
+                            <span class="badge bg-danger">Gecikmiş</span>
+                }
+                else
+                {
+                            <span class="badge bg-warning">Devam Ediyor</span>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Kitap Bilgileri</h5>
+                        <dl class="row mt-3">
+                            <dt class="col-sm-4">Başlık</dt>
+                            <dd class="col-sm-8">
+                                <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.BookId">
+                                    @Model.Book.Title
+                                </a>
+                            </dd>
+
+                            <dt class="col-sm-4">Yazar</dt>
+                            <dd class="col-sm-8">@Model.Book.Author</dd>
+
+                            <dt class="col-sm-4">ISBN</dt>
+                            <dd class="col-sm-8">@Model.Book.ISBN</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Üye Bilgileri</h5>
+                        <dl class="row mt-3">
+                            <dt class="col-sm-4">Ad Soyad</dt>
+                            <dd class="col-sm-8">
+                                <a asp-controller="Members" asp-action="Details" asp-route-id="@Model.MemberId">
+                                    @Model.Member.FirstName @Model.Member.LastName
+                                </a>
+                            </dd>
+
+                            <dt class="col-sm-4">E-posta</dt>
+                            <dd class="col-sm-8">@Model.Member.Email</dd>
+
+                            <dt class="col-sm-4">Telefon</dt>
+                            <dd class="col-sm-8">@Model.Member.Phone</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ödünç Bilgileri</h5>
+                        <dl class="row mt-3">
+                            <dt class="col-sm-4">Alış Tarihi</dt>
+                            <dd class="col-sm-8">@Model.LoanDate.ToString("dd.MM.yyyy")</dd>
+
+                            <dt class="col-sm-4">Son Tarih</dt>
+                            <dd class="col-sm-8">@Model.DueDate.ToString("dd.MM.yyyy")</dd>
+
+                            @if (Model.ReturnDate.HasValue)
+                            {
+                                        <dt class="col-sm-4">İade Tarihi</dt>
+                                        <dd class="col-sm-8">@Model.ReturnDate.Value.ToString("dd.MM.yyyy")</dd>
+                            }
+
+                            <dt class="col-sm-4">Uzatma Sayısı</dt>
+                            <dd class="col-sm-8">@Model.ExtensionCount</dd>
+
+                            <dt class="col-sm-4">Kayıt Tarihi</dt>
+                            <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                            @if (Model.UpdatedAt.HasValue)
+                            {
+                                        <dt class="col-sm-4">Son Güncelleme</dt>
+                                        <dd class="col-sm-8">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+
+                @if (!Model.IsReturned)
+                {
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">İşlemler</h5>
+                                    <div class="d-grid gap-2 mt-3">
+                                        <form asp-action="Return" asp-route-id="@Model.Id" method="post">
+                                            <button type="submit" class="btn btn-success w-100" onclick="return confirm('Bu kitabı iade etmek istediğinizden emin misiniz?')">
+                                                <i class="fas fa-undo"></i> İade Et
+                                            </button>
+                                        </form>
+
+                                @if (Model.ExtensionCount < 2)
+                                {
+                                                    <form asp-action="Extend" asp-route-id="@Model.Id" method="post">
+                                                        <button type="submit" class="btn btn-warning w-100" onclick="return confirm('Ödünç süresini 14 gün uzatmak istediğinizden emin misiniz?')">
+                                                            <i class="fas fa-clock"></i> Süre Uzat
+                                                        </button>
+                                                    </form>
+                                }
+                                    </div>
+                                </div>
+                            </div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,71 @@
+@model LibraryManagement.Core.Entities.Member
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Üye Sil</h1>
+        </div>
+
+        <div class="alert alert-danger">
+            <h5 class="alert-heading">
+                <i class="fas fa-exclamation-triangle"></i> Dikkat!
+            </h5>
+            <p class="mb-0">
+                <strong>@Model.FirstName @Model.LastName</strong> isimli üyeyi silmek istediğinizden emin misiniz?
+                Bu işlem geri alınamaz.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">E-posta</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+
+                    <dt class="col-sm-4">Telefon</dt>
+                    <dd class="col-sm-8">@Model.Phone</dd>
+
+                    <dt class="col-sm-4">Adres</dt>
+                    <dd class="col-sm-8">@Model.Address</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Üyelik Tarihi</dt>
+                    <dd class="col-sm-8">@Model.MembershipDate.ToString("dd.MM.yyyy")</dd>
+
+                    <dt class="col-sm-4">Kayıt Tarihi</dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                                <dt class="col-sm-4">Son Güncelleme</dt>
+                                <dd class="col-sm-8">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        @if (Model.BookLoans != null && Model.BookLoans.Any(l => !l.IsReturned))
+        {
+                    <div class="alert alert-warning mt-3">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-circle"></i> Uyarı
+                        </h5>
+                        <p class="mb-0">
+                            Bu üyenin henüz iade edilmemiş kitapları bulunmaktadır. Üyeyi silmeden önce tüm kitapların iade edildiğinden emin olun.
+                        </p>
+                    </div>
+        }
+
+        <form asp-action="Delete" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Sil
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </form>
+    </div>
+</div> 

@@ -1,0 +1,62 @@
+@model LibraryManagement.Core.Entities.Book
+
+@{
+    ViewData["Title"] = "Kitap Sil";
+}
+
+<div class="container-fluid">
+    <h1>Kitap Sil</h1>
+    <div class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        Bu kitabı silmek istediğinizden emin misiniz?
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@Model.Author</h6>
+
+                    <dl class="row mt-4">
+                        <dt class="col-sm-3">ISBN</dt>
+                        <dd class="col-sm-9">@Model.ISBN</dd>
+
+                        <dt class="col-sm-3">Yayınevi</dt>
+                        <dd class="col-sm-9">@Model.Publisher</dd>
+
+                        <dt class="col-sm-3">Yayın Yılı</dt>
+                        <dd class="col-sm-9">@Model.PublicationYear</dd>
+
+                        <dt class="col-sm-3">Kategori</dt>
+                        <dd class="col-sm-9">@Model.Category</dd>
+
+                        <dt class="col-sm-3">Kopya Sayısı</dt>
+                        <dd class="col-sm-9">@Model.CopyCount</dd>
+
+                        <dt class="col-sm-4">Mevcut Kopya</dt>
+                        <dd class="col-sm-8">@Model.AvailableCopies</dd>
+                    </dl>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mt-4">
+                            <h6>Açıklama</h6>
+                            <p class="card-text">@Model.Description</p>
+                        </div>
+                    }
+
+                    <form asp-action="Delete" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Listeye Dön
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

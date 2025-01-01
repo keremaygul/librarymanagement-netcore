@@ -1,0 +1,142 @@
+@model IEnumerable<LibraryManagement.Core.Entities.BookLoan>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Ödünç İşlemleri</h1>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Yeni Ödünç
+            </a>
+        </div>
+
+        <div class="mb-4">
+            <div class="btn-group" role="group">
+                <a asp-action="Index" class="btn btn-outline-secondary @(string.IsNullOrEmpty(Context.Request.Query["status"]) ? "active" : "")">
+                    Tümü
+                </a>
+                <a asp-action="Index" asp-route-status="active" class="btn btn-outline-warning @(Context.Request.Query["status"] == "active" ? "active" : "")">
+                    Devam Eden
+                </a>
+                <a asp-action="Index" asp-route-status="overdue" class="btn btn-outline-danger @(Context.Request.Query["status"] == "overdue" ? "active" : "")">
+                    Gecikmiş
+                </a>
+                <a asp-action="Index" asp-route-status="returned" class="btn btn-outline-success @(Context.Request.Query["status"] == "returned" ? "active" : "")">
+                    İade Edilmiş
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Kitap</th>
+                        <th>Üye</th>
+                        <th>Alış Tarihi</th>
+                        <th>İade Tarihi</th>
+                        <th>Son Tarih</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                                <tr>
+                                    <td>
+                                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.BookId">
+                                    @item.Book.Title
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Members" asp-action="Details" asp-route-id="@item.MemberId">
+                                    @item.Member.FirstName @item.Member.LastName
+                                        </a>
+                                    </td>
+                                    <td>@item.LoanDate.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                @if (item.ReturnDate.HasValue)
+                                {
+                                    @item.ReturnDate.Value.ToString("dd.MM.yyyy")
+                                }
+                                else
+                                {
+                                                    <span class="text-muted">-</span>
+                                }
+                                    </td>
+                                    <td>@item.DueDate.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                @if (item.IsReturned)
+                                {
+                                                    <span class="badge bg-success">İade Edildi</span>
+                                }
+                                else if (item.DueDate < DateTime.Now)
+                                {
+                                                    <span class="badge bg-danger">Gecikmiş</span>
+                                }
+                                else
+                                {
+                                                    <span class="badge bg-warning">Devam Ediyor</span>
+                                }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Detaylar">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                    @if (!item.IsReturned)
+                                    {
+                                                        <form asp-action="Return" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                            <button type="submit" class="btn btn-sm btn-success" title="İade Et" onclick="return confirm('Bu kitabı iade etmek istediğinizden emin misiniz?')">
+                                                                <i class="fas fa-undo"></i>
+                                                            </button>
+                                                        </form>
+                                        if (item.ExtensionCount < 2)
+                                        {
+                                                                    <form asp-action="Extend" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                                        <button type="submit" class="btn btn-sm btn-warning" title="Süre Uzat" onclick="return confirm('Ödünç süresini 14 gün uzatmak istediğinizden emin misiniz?')">
+                                                                            <i class="fas fa-clock"></i>
+                                                                        </button>
+                                                                    </form>
+                                        }
+                                    }
+                                        </div>
+                                    </td>
+                                </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $('.table').DataTable({
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"
+                        },
+                        "dom": 'Bfrtip',
+                        "buttons": [
+                            {
+                                extend: 'excel',
+                                text: '<i class="fas fa-file-excel"></i> Excel',
+                                className: 'btn btn-success'
+                            },
+                            {
+                                extend: 'pdf',
+                                text: '<i class="fas fa-file-pdf"></i> PDF',
+                                className: 'btn btn-danger'
+                            },
+                            {
+                                extend: 'print',
+                                text: '<i class="fas fa-print"></i> Yazdır',
+                                className: 'btn btn-info'
+                            }
+                        ],
+                        "order": [[2, "desc"]] // Alış tarihine göre sırala
+                    });
+                });
+            </script>
+} 

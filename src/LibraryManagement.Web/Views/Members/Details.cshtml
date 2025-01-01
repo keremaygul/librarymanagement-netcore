@@ -1,0 +1,151 @@
+@model LibraryManagement.Core.Entities.Member
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>@Model.FirstName @Model.LastName</h1>
+                    <div>
+                        @if (Model.IsActive)
+                        {
+                                    <span class="badge bg-success">Aktif Üye</span>
+                        }
+                        else
+                        {
+                                    <span class="badge bg-danger">Pasif Üye</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">E-posta</dt>
+                            <dd class="col-sm-8">@Model.Email</dd>
+
+                            <dt class="col-sm-4">Telefon</dt>
+                            <dd class="col-sm-8">@Model.Phone</dd>
+
+                            <dt class="col-sm-4">Adres</dt>
+                            <dd class="col-sm-8">@Model.Address</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Üyelik Tarihi</dt>
+                            <dd class="col-sm-8">@Model.MembershipDate.ToString("dd.MM.yyyy")</dd>
+
+                            <dt class="col-sm-4">Kayıt Tarihi</dt>
+                            <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                            @if (Model.UpdatedAt.HasValue)
+                            {
+                                        <dt class="col-sm-4">Son Güncelleme</dt>
+                                        <dd class="col-sm-8">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.BookLoans != null && Model.BookLoans.Any())
+        {
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Ödünç Alınan Kitaplar</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Kitap</th>
+                                            <th>Alış Tarihi</th>
+                                            <th>İade Tarihi</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                @foreach (var loan in Model.BookLoans.OrderByDescending(l => l.LoanDate))
+                                {
+                                                    <tr>
+                                                        <td>
+                                                            <a asp-controller="Books" asp-action="Details" asp-route-id="@loan.BookId">
+                                                @loan.Book.Title
+                                                            </a>
+                                                        </td>
+                                                        <td>@loan.LoanDate.ToString("dd.MM.yyyy")</td>
+                                                        <td>
+                                            @if (loan.ReturnDate.HasValue)
+                                            {
+                                                @loan.ReturnDate.Value.ToString("dd.MM.yyyy")
+                                            }
+                                            else
+                                            {
+                                                                        <span class="text-muted">-</span>
+                                            }
+                                                        </td>
+                                                        <td>
+                                            @if (loan.IsReturned)
+                                            {
+                                                                        <span class="badge bg-success">İade Edildi</span>
+                                            }
+                                            else if (loan.DueDate < DateTime.Now)
+                                            {
+                                                                        <span class="badge bg-danger">Gecikmiş</span>
+                                            }
+                                            else
+                                            {
+                                                                        <span class="badge bg-warning">Devam Ediyor</span>
+                                            }
+                                                        </td>
+                                                    </tr>
+                                }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">İstatistikler</h5>
+                <div class="mt-4">
+                    @{
+                        var totalLoans = Model.BookLoans?.Count ?? 0;
+                        var activeLoans = Model.BookLoans?.Count(l => !l.IsReturned) ?? 0;
+                        var overdueLoans = Model.BookLoans?.Count(l => !l.IsReturned && l.DueDate < DateTime.Now) ?? 0;
+                    }
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Toplam Ödünç</span>
+                        <span class="badge bg-primary">@totalLoans</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Aktif Ödünç</span>
+                        <span class="badge bg-warning">@activeLoans</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Gecikmiş</span>
+                        <span class="badge bg-danger">@overdueLoans</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Düzenle
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

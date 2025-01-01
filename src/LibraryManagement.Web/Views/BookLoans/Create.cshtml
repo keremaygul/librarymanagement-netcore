@@ -1,0 +1,242 @@
+@model LibraryManagement.Core.Entities.BookLoan
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Yeni Ödünç Verme</h1>
+        </div>
+
+        <form asp-action="Create" id="loanForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0"><i class="fas fa-book"></i> Kitap Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label asp-for="BookId" class="control-label">Kitap Seçimi</label>
+                                <select asp-for="BookId" class="form-select" asp-items="ViewBag.BookId"
+                                    data-placeholder="Kitap adı veya ISBN ile arama yapın...">
+                                    <option value="">-- Kitap Seçin --</option>
+                                </select>
+                                <span asp-validation-for="BookId" class="text-danger"></span>
+                            </div>
+                            <div id="selectedBookInfo" class="mt-3" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h6 class="book-title mb-2"></h6>
+                                    <p class="book-details mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0"><i class="fas fa-user"></i> Üye Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label asp-for="MemberId" class="control-label">Üye Seçimi</label>
+                                <select asp-for="MemberId" class="form-select" asp-items="ViewBag.MemberId"
+                                    data-placeholder="Üye adı veya telefon ile arama yapın...">
+                                    <option value="">-- Üye Seçin --</option>
+                                </select>
+                                <span asp-validation-for="MemberId" class="text-danger"></span>
+                            </div>
+                            <div id="selectedMemberInfo" class="mt-3" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h6 class="member-name mb-2"></h6>
+                                    <p class="member-details mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-calendar"></i> Ödünç Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="LoanDate" class="control-label">Alış Tarihi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <input asp-for="LoanDate" class="form-control" type="date"
+                                        value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                </div>
+                                <span asp-validation-for="LoanDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="DueDate" class="control-label">Son Teslim Tarihi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
+                                    <input asp-for="DueDate" class="form-control" type="date"
+                                        value="@DateTime.Now.AddDays(14).ToString("yyyy-MM-dd")" />
+                                </div>
+                                <span asp-validation-for="DueDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Ödünç Ver
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            // Select2 için özel tema ve dil ayarları
+            $('#BookId').select2({
+                theme: 'bootstrap-5',
+                language: 'tr',
+                placeholder: 'Kitap adı veya ISBN ile arama yapın...',
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax: {
+                    delay: 250,
+                    url: '/api/Books/Search',
+                    data: function (params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return {
+                                    id: item.id,
+                                    text: item.title,
+                                    author: item.author,
+                                    isbn: item.isbn,
+                                    availableCopies: item.availableCopies
+                                };
+                            })
+                        };
+                    }
+                },
+                templateResult: formatBook,
+                templateSelection: formatBookSelection
+            });
+
+            $('#MemberId').select2({
+                theme: 'bootstrap-5',
+                language: 'tr',
+                placeholder: 'Üye adı veya telefon ile arama yapın...',
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax: {
+                    delay: 250,
+                    url: '/api/Members/Search',
+                    data: function (params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return {
+                                    id: item.id,
+                                    text: item.fullName,
+                                    email: item.email,
+                                    phone: item.phone
+                                };
+                            })
+                        };
+                    }
+                },
+                templateResult: formatMember,
+                templateSelection: formatMemberSelection
+            });
+
+            // Kitap seçimi için özel format
+            function formatBook(book) {
+                if (!book.id) return book.text;
+                return $(`
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <strong>${book.text}</strong><br>
+                                                            <small class="text-muted">Yazar: ${book.author}</small>
+                                                        </div>
+                                                        <span class="badge bg-info">${book.availableCopies} adet mevcut</span>
+                                                    </div>
+                                                `);
+            }
+
+            function formatBookSelection(book) {
+                if (!book.id) return book.text;
+                $('#selectedBookInfo').show();
+                $('#selectedBookInfo .book-title').text(book.text);
+                $('#selectedBookInfo .book-details').html(`
+                                                    Yazar: ${book.author}<br>
+                                                    ISBN: ${book.isbn}<br>
+                                                    Mevcut Kopya: ${book.availableCopies}
+                                                `);
+                return book.text;
+            }
+
+            // Üye seçimi için özel format
+            function formatMember(member) {
+                if (!member.id) return member.text;
+                return $(`
+                                                    <div>
+                                                        <strong>${member.text}</strong><br>
+                                                        <small class="text-muted">
+                                                            ${member.email} | ${member.phone}
+                                                        </small>
+                                                    </div>
+                                                `);
+            }
+
+            function formatMemberSelection(member) {
+                if (!member.id) return member.text;
+                $('#selectedMemberInfo').show();
+                $('#selectedMemberInfo .member-name').text(member.text);
+                $('#selectedMemberInfo .member-details').html(`
+                                                    E-posta: ${member.email}<br>
+                                                    Telefon: ${member.phone}
+                                                `);
+                return member.text;
+            }
+
+            // Form gönderimi
+            $('#loanForm').on('submit', function (e) {
+                if (!$('#BookId').val() || !$('#MemberId').val()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Lütfen kitap ve üye seçimi yapın.'
+                    });
+                    return false;
+                }
+                return true;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,100 @@
+@model LibraryManagement.Core.Entities.Book
+
+@{
+    ViewData["Title"] = "Kitap Detayları";
+}
+
+<div class="container-fluid">
+    <h1>Kitap Detayları</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@Model.Author</h6>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">ISBN</dt>
+                                <dd class="col-sm-8">@Model.ISBN</dd>
+
+                                <dt class="col-sm-4">Yayınevi</dt>
+                                <dd class="col-sm-8">@Model.Publisher</dd>
+
+                                <dt class="col-sm-4">Yayın Yılı</dt>
+                                <dd class="col-sm-8">@Model.PublicationYear</dd>
+
+                                <dt class="col-sm-4">Kategori</dt>
+                                <dd class="col-sm-8">@Model.Category</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Kopya Sayısı</dt>
+                                <dd class="col-sm-8">@Model.CopyCount</dd>
+
+                                <dt class="col-sm-4">Mevcut Kopya</dt>
+                                <dd class="col-sm-8">@Model.AvailableCopies</dd>
+
+                                <dt class="col-sm-4">Oluşturulma</dt>
+                                <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                                @if (Model.UpdatedAt.HasValue)
+                                {
+                                    <dt class="col-sm-4">Son Güncelleme</dt>
+                                    <dd class="col-sm-8">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mt-4">
+                            <h6>Açıklama</h6>
+                            <p class="card-text">@Model.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Durum</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        @{
+                            var availabilityPercentage = (Model.AvailableCopies * 100) / Model.CopyCount;
+                            var progressClass = availabilityPercentage > 50 ? "bg-success" :
+                            availabilityPercentage > 20 ? "bg-warning" : "bg-danger";
+                        }
+                        <div class="progress-bar @progressClass" role="progressbar"
+                            style="width: @availabilityPercentage%;" aria-valuenow="@availabilityPercentage"
+                            aria-valuemin="0" aria-valuemax="100">
+                            @availabilityPercentage%
+                        </div>
+                    </div>
+                    <p class="card-text">
+                        <strong>Toplam Kopya:</strong> @Model.CopyCount<br />
+                        <strong>Mevcut Kopya:</strong> @Model.AvailableCopies<br />
+                        <strong>Ödünç Verilen:</strong> @(Model.CopyCount - Model.AvailableCopies)
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
