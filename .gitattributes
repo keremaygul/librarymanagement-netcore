@@ -1,0 +1,85 @@
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+
+###############################################################################
+# Set default behavior for command prompt diff.
+#
+# This is need for earlier builds of msysgit that does not have it on by
+# default for csharp files.
+# Note: This is only used by command line
+###############################################################################
+*.cs     diff=csharp
+*.sln    merge=union
+*.csproj merge=union
+*.vbproj merge=union
+*.fsproj merge=union
+*.dbproj merge=union
+
+###############################################################################
+# Behavior for image files
+#
+# Image files are treated as binary by default.
+###############################################################################
+*.jpg   binary
+*.png   binary
+*.gif   binary
+*.ico   binary
+*.mov   binary
+*.mp4   binary
+*.mp3   binary
+*.flv   binary
+*.fla   binary
+*.swf   binary
+*.gz    binary
+*.zip   binary
+*.7z    binary
+*.ttf   binary
+*.eot   binary
+*.woff  binary
+*.pyc   binary
+*.pdf   binary
+
+###############################################################################
+# Set C# as primary language
+###############################################################################
+*.cs linguist-language=C#
+*.cshtml linguist-language=C#
+*.csproj linguist-language=C#
+*.sln linguist-language=C#
+
+###############################################################################
+# diff behavior for common document formats
+# 
+# Convert binary document formats to text before diffing them. This feature
+# is only available from the command line. Turn it on by uncommenting the 
+# entries below.
+###############################################################################
+*.doc   diff=astextplain
+*.DOC   diff=astextplain
+*.docx  diff=astextplain
+*.DOCX  diff=astextplain
+*.dot   diff=astextplain
+*.DOT   diff=astextplain
+*.pdf   diff=astextplain
+*.PDF   diff=astextplain
+*.rtf   diff=astextplain
+*.RTF   diff=astextplain
+*.md    text diff=markdown
+*.tex   text diff=tex
+*.adoc  text
+*.textile text
+*.mustache text
+*.csv    text
+*.tab    text
+*.tsv    text
+*.txt    text
+*.sql    text
+*.epub   diff=astextplain
+
+###############################################################################
+# Handle line endings automatically for files detected as text
+# and leave all files detected as binary untouched.
+###############################################################################
+* text=auto eol=lf
